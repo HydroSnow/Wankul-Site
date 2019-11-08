@@ -1,0 +1,57 @@
+# config/routes.yaml
+
+index:
+    path: /
+    controller: App\Controller\IndexController::index
+
+list-all:
+    path: /list/
+    controller: App\Controller\ListController::all
+
+list-category:
+    path: /list/{id}
+    controller: App\Controller\ListController::category
+
+item:
+    path: /item/{id}
+    controller: App\Controller\ItemController::item
+
+self:
+    path: /self/
+    controller: App\Controller\SelfController::self
+
+user:
+    path: /user/{id}
+    controller: App\Controller\UserController::user
+
+login:
+    path: /login/
+    controller: App\Controller\LoginController::login
+
+logout:
+    path: /logout/
+    controller: App\Controller\LoginController::logout
+
+cart:
+    path: /cart/
+    controller: App\Controller\CartController::cart
+
+removeToCart:
+    path: /removeToCart/{id}
+    controller: App\Controller\CartController::removeToCart
+
+addToCart:
+    path: /addToCart/{id}
+    controller: App\Controller\CartController::addToCart
+
+command:
+    path: /command/
+    controller: App\Controller\CartController::command
+
+commandFinal:
+    path: /commandFinal/
+    controller: App\Controller\CartController::commandFinal
+
+api:
+    path: /api/
+    controller: App\Controller\ApiController::api

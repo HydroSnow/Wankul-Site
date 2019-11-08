@@ -1,0 +1,58 @@
+{% extends 'page.html.twig' %}
+
+{% block title %}Panier{% endblock %}
+
+{% block page %}
+{% if paid == false %}
+    <div class="row text-center pb-1 pt-5">
+        <div class="col-12">
+            <br><br><br><br><br><br><br>
+            <h1>Une erreur a eu lieu lors du paiement</h1>
+            <br>
+            <a href="{{ path('cart') }}" class="btn btn-success">Retourner sur votre panier</a>
+        </div>
+    </div>
+{% else %}
+    <div class="row text-center pb-1 pt-4">
+        <div class="col-12">
+            <h1>Le paiement a bien été effectué</h1>
+        </div>
+    </div>
+
+    <div class="row text-center pt-4">
+
+        <div class="col-4"> </div>
+
+        <div class="shadow p-3 mb-5 bg-white rounded col-4">
+            <div id="scoreboard">
+            <h3>Résumé de la commande </h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Produit</th>
+                            <th scope="col">Prix</th>
+                            <th scope="col">Quantité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% set total = 0 %}
+                      {% for fromage in fromageList %}
+                      {% set total = total + fromage['id'].prix * fromage['quantity'] %}
+                      <tr>
+                          <td> {{ fromage['id'].nom }} </td> <td>{{ fromage['id'].prix }}€</td> <td>{{ fromage['quantity'] }}</td>
+                      <tr>
+                      {% endfor %}
+                      <tr>
+                          <td> <h5>Montant Final</h5> </td> <td>{{ total }}€</td> <td></td>
+                      <tr>
+                    </tbody>
+                </table>
+            </div>
+            <a href="{{ path('index') }}" class="btn btn-success">Retourner a l'accueil</a>
+        </div>
+
+        <div class="col-4"> </div>
+
+    </div>
+{% endif %}
+{% endblock %}

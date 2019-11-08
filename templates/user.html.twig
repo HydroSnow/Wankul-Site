@@ -1,0 +1,31 @@
+{% extends 'page.html.twig' %}
+
+{% block title %}Panneau utilisateur{% endblock %}
+
+{% block page %}
+
+<div class="row text-center">
+
+    <div class="col-lg-4 my-4">
+        <h1>{{ selected.nom }}</h1>
+        <h4>{{ selected.role.nom }}</h4>
+    </div> <!-- /.col-lg-4 -->
+
+    <div class="col-lg-8 my-4">
+
+        <div class="card card-outline-secondary my-4">
+            <div class="card-header">Avis</div>
+            <div class="card-body">
+                    <p class="text-warning">
+                    </p>
+                    <p></p>
+                    <small class="text-muted">Par , le 20 septembre 2019</small>
+                    <hr>
+                <a href="#" class="btn btn-success">Donner un avis</a>
+            </div>
+        </div> <!-- /.card -->
+
+    </div> <!-- /.col-lg-4 -->
+
+</div> <!-- /.row -->
+{% endblock %}

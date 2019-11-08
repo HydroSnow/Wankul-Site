@@ -1,0 +1,29 @@
+{% extends 'page.html.twig' %}
+
+{% block title %}Panier{% endblock %}
+
+{% block page %}
+
+<div class="row text-center pb-1 pt-5">
+    <div class="col-4"> </div>
+    <div class="col-4">
+        <form action="" class="was-validated">
+            <div class="form-group">
+            <label for="numCarte">Numero de carte </label>
+            <input type="text" class="form-control" id="numCarte" placeholder="4572 8694 3488 9966" name="numCarte" required>
+            </div>
+            <div class="form-group">
+            <label for="dte">Date d'expiration</label>
+            <input type="text" class="form-control" id="dte" placeholder="09/22" name="dte" required>
+            </div>
+            <div class="form-group">
+            <label for="crypto">Cryptogramme</label>
+            <input type="text" class="form-control" id="crypto" placeholder="562" name="crypto" required>
+            </div>
+        </form>
+        <a href="{{ path('commandFinal') }}" class="btn btn-success">Finaliser et Payer</a>
+    </div>
+    <div class="col-4"> </div>
+</div>
+
+{% endblock %}

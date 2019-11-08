@@ -1,0 +1,49 @@
+{% extends 'page.html.twig' %}
+
+{% if selected == 'all' %}
+    {% set all = true %}
+{% else %}
+    {% set all = false %}
+{% endif %}
+
+{% block title %}{% if all %}Tous les laits{% else %}{{ selected.nom }}{% endif %}{% endblock %}
+
+{% block page %}
+<div class="row">
+    <div class="col-lg-3">
+        <h1 class="my-4 text-center">Fromages</h1>
+        <div class="list-group">
+            <a href="{{ path('list-all') }}" class="list-group-item{% if all %} active{% endif %}">Tous les laits</a>
+            {% for lait in laits %}
+                <a href="{{ path('list-category', { 'id': lait.id }) }}" class="list-group-item{% if not all and selected.id == lait.id %} active{% endif %}">{{ lait.nom }}</a>
+            {% endfor %}
+        </div>
+    </div> <!-- /.col-lg-3 -->
+
+    <div class="col-lg-9">
+
+        <div class="row my-4">
+            {% for fromage in fromages %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="{{ fromage.img }}" alt="">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <a href="{{ path('item', { 'id': fromage.id }) }}">{{ fromage.nom }}</a>
+                            </h4>
+                            <p class="card-text">
+                                {{ fromage.type.nom }} <br />
+                                {{ fromage.lait.nom }}
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <h5>{{ fromage.prix }}€</h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div> <!-- /.row -->
+
+    </div> <!-- /.col-lg-9 -->
+</div> <!-- /.row -->
+{% endblock %}

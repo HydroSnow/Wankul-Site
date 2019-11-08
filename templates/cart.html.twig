@@ -1,0 +1,87 @@
+{% extends 'page.html.twig' %}
+
+{% block title %}Panier{% endblock %}
+
+{% block page %}
+{% if empty == true %}
+    <div class="row text-center pb-1 pt-5">
+        <div class="col-12">
+            <br><br><br><br><br><br><br>
+            <h1>Votre panier est vide</h1>
+            <br>
+            <a href="{{ path('list-all') }}" class="btn btn-success">Retourner sur la boutique</a>
+        </div>
+    </div>
+{% else %}
+    <div class="row text-center pb-1 pt-4">
+        <div class="col-12">
+            <h1>Total</h1>
+        </div>
+    </div>
+
+    <div class="row text-center pt-4">
+
+        <div class="col-3"> </div>
+
+        <div class="shadow p-3 mb-5 bg-white rounded col-6">
+            <div id="scoreboard">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Produit</th>
+                            <th scope="col">Prix</th>
+                            <th scope="col">Quantité</th>
+                            <th> Supprimer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% set total = 0 %}
+                      {% for fromage in fromageList %}
+                      {% set total = total + fromage['id'].prix * fromage['quantity'] %}
+                      <tr>
+                          <td> {{ fromage['id'].nom }} </td> <td>{{ fromage['id'].prix }}€</td> <td>{{ fromage['quantity'] }}</td>
+                          <td><a href="{{ path('removeToCart', { 'id': fromage['id'].id }) }}"  style="background-color:red;border-color:red;" class="btn btn-success pt-0 pr-2 pl-2 pb-0"> X </a></td>
+                      <tr>
+                      {% endfor %}
+                      <tr>
+                          <td> <h5>Montant Final</h5> </td> <td>{{ total }}€</td> <td></td> <td></td>
+                      <tr>
+                    </tbody>
+                </table>
+                <a href="{{ path('command') }}" class="btn btn-success">Commander</a>
+            </div>
+        </div>
+
+        <div class="col-3"> </div>
+
+    </div>
+
+
+    <div class="row text-center pb-4 pt-4">
+        <div class="col-12">
+            <h1>Récapitulatif</h1>
+        </div>
+    </div>
+
+    {% for fromage in fromageList %}
+        <div class="row text-center pb-4">
+          <div class="col-3"> </div>
+          <div class="card col-6 border-dark" style="max-width: 540px;">
+              <div class="row no-gutters">
+                  <div class="col-md-6" style="background-image:url({{ fromage['id'].img }}); background-size: cover;">
+                  </div>
+                  <div class="col-md-6">
+                      <div class="card-body">
+                          <h5 class="card-title"> {{ fromage['id'].nom }} </h5>
+                          <p class="card-text"> {{ fromage['id'].type.nom }} </p>
+                          <p class="card-text"> {{ fromage['id'].lait.nom }} </p>
+                          <p class="card-text"> {{ fromage['id'].prix }}€ </p>
+                      </div>
+                  </div>
+              </div>
+          </div ><!-- /cardpanier -->
+          <div class="col-3"> </div>
+        </div> <!-- /.row -->
+    {% endfor %}
+{% endif %}
+{% endblock %}
