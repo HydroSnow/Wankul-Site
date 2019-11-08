@@ -15,7 +15,6 @@ class IndexController extends AbstractController
      */
     public function index(Environment $twig)
     {
-      $this->get('session')->set('cart', null);
         $content = $twig->render('index.html.twig', []);
         return new Response($content);
     }
