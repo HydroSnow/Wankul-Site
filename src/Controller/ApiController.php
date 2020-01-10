@@ -8,17 +8,20 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-use App\Entity\Lait;
 use App\Entity\Fromage;
 use App\Entity\Type;
+use App\Entity\Lait;
 
 class ApiController extends AbstractController
 {
-    private function fromage($action, $request) {
+    /**
+     * @Route("/api/fromage", name="api-fromages")
+     */
+    public function fromages(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Fromage::class);
 
-        if ($action == "list") {
+        if ($request->isMethod('GET')) {
             $fromages = $repo->findAll();
 
             $list = [];
@@ -40,38 +43,20 @@ class ApiController extends AbstractController
             ]);
         }
 
-        if ($action == "get") {
-            $id = $request->request->get('id');
-            if ($id == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Il manque des arguments"
-                ]);
-            }
+        return new JsonResponse([
+            "valid" => false,
+            "error" => "La requete est invalide."
+        ]);
+    }
 
-            $fromage = $repo->find($id);
-            if ($fromage == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Des identifiants n'ont pas pu etre trouves"
-                ]);
-            }
+    /**
+     * @Route("/api/fromage/{id}", name="api-fromage")
+     */
+    public function fromage(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(Fromage::class);
 
-            return new JsonResponse([
-                "valid" => true,
-                "result" => [
-                    'id' => $fromage->getId(),
-                    'nom' => $fromage->getNom(),
-                    'origine' => $fromage->getOrigine(),
-                    'lait' => $fromage->getLait()->getId(),
-                    'type' => $fromage->getType()->getId(),
-                    'img' => $fromage->getImg(),
-                    'prix' => $fromage->getPrix()
-                ]
-            ]);
-        }
-
-        if ($action == "add") {
+        if ($request->isMethod('POST')) {
             $nom = $request->request->get('nom');
             $origine = $request->request->get('origine');
             $id_lait = $request->request->get('lait');
@@ -117,15 +102,7 @@ class ApiController extends AbstractController
             ]);
         }
 
-        if ($action == "remove") {
-            $id = $request->request->get('id');
-            if ($id == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Il manque des arguments"
-                ]);
-            }
-
+        if ($request->isMethod('DELETE')) {
             $fromage = $repo->find($id);
             if ($fromage == null) {
                 return new JsonResponse([
@@ -136,6 +113,7 @@ class ApiController extends AbstractController
 
             $em->remove($fromage);
             $em->flush();
+
             return new JsonResponse([
                 "valid" => true
             ]);
@@ -143,15 +121,18 @@ class ApiController extends AbstractController
 
         return new JsonResponse([
             "valid" => false,
-            "error" => "Action inconnue"
+            "error" => "La requete est invalide."
         ]);
     }
 
-    private function type($action, $request) {
+    /**
+     * @Route("/api/type", name="api-types")
+     */
+    public function types(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Type::class);
 
-        if ($action == "list") {
+        if ($request->isMethod('GET')) {
             $types = $repo->findAll();
 
             $list = [];
@@ -168,43 +149,33 @@ class ApiController extends AbstractController
             ]);
         }
 
-        if ($action == "get") {
-            $id = $request->request->get('id');
-            if ($id == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Il manque des arguments"
-                ]);
-            }
-
-            $type = $repo->find($id);
-            if ($type == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Des identifiants n'ont pas pu etre trouves"
-                ]);
-            }
-
-            return new JsonResponse([
-                "valid" => true,
-                "result" => [
-                    'id' => $type->getId(),
-                    'nom' => $type->getNom()
-                ]
-            ]);
-        }
-
         return new JsonResponse([
             "valid" => false,
-            "error" => "Action inconnue"
+            "error" => "La requete est invalide."
         ]);
     }
 
-    public function lait($action, $request) {
+    /**
+     * @Route("/api/type/{id}", name="api-type")
+     */
+    public function type(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(Type::class);
+
+        return new JsonResponse([
+            "valid" => false,
+            "error" => "La requete est invalide."
+        ]);
+    }
+
+    /**
+     * @Route("/api/lait", name="api-laits")
+     */
+    public function laits(Request $request) {
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Lait::class);
 
-        if ($action == "list") {
+        if ($request->isMethod('GET')) {
             $laits = $repo->findAll();
 
             $list = [];
@@ -221,81 +192,23 @@ class ApiController extends AbstractController
             ]);
         }
 
-        if ($action == "get") {
-            $id = $request->request->get('id');
-            if ($id == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Il manque des arguments"
-                ]);
-            }
-
-            $lait = $repo->find($id);
-            if ($lait == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Des identifiants n'ont pas pu etre trouves"
-                ]);
-            }
-
-            return new JsonResponse([
-                "valid" => true,
-                "result" => [
-                    'id' => $lait->getId(),
-                    'nom' => $lait->getNom()
-                ]
-            ]);
-        }
-
         return new JsonResponse([
             "valid" => false,
-            "error" => "Action inconnue"
+            "error" => "La requete est invalide."
         ]);
     }
 
     /**
-     * @Route("/api/", name="api")
+     * @Route("/api/lait/{id}", name="api-lait")
      */
-    public function api(Request $request) {
-        if (!$request->isMethod('POST')) {
-            return new JsonResponse([
-                "valid" => false,
-                "error" => "Les requetes doivent etre faites avec la methode POST"
-            ]);
-        }
+    public function lait(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(Lait::class);
 
-        if ($request->query->get('token') != "992bbd2dfa42f3078025dd8ee76dd16b") {
-            return new JsonResponse([
-                "valid" => false,
-                "error" => "Le jeton d'authentification est invalide ou manquant"
-            ]);
-        }
-
-        $entity = $request->query->get('entity');
-        $action = $request->query->get('action');
-        if ($entity == null  || $action == null) {
-            return new JsonResponse([
-                "valid" => false,
-                "error" => "Les requetes doivent contenir une entite et une action"
-            ]);
-        }
-
-        if ($entity == "fromage") {
-            return $this->fromage($action, $request);
-
-        } else if ($entity == "type") {
-            return $this->type($action, $request);
-
-        } else if ($entity == "lait") {
-            return $this->lait($action, $request);
-
-        } else {
-            return new JsonResponse([
-                "valid" => false,
-                "error" => "Entite inconnue"
-            ]);
-        }
-
+        return new JsonResponse([
+            "valid" => false,
+            "error" => "La requete est invalide."
+        ]);
     }
 
 }

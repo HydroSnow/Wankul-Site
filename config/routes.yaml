@@ -36,11 +36,11 @@ cart:
     path: /cart/
     controller: App\Controller\CartController::cart
 
-removeToCart:
+remove-to-cart:
     path: /removeToCart/{id}
     controller: App\Controller\CartController::removeToCart
 
-addToCart:
+add-to-cart:
     path: /addToCart/{id}
     controller: App\Controller\CartController::addToCart
 
@@ -48,10 +48,30 @@ command:
     path: /command/
     controller: App\Controller\CartController::command
 
-commandFinal:
+command-final:
     path: /commandFinal/
     controller: App\Controller\CartController::commandFinal
 
-api:
-    path: /api/
-    controller: App\Controller\ApiController::api
+api-fromages:
+    path: /api/fromage
+    controller: App\Controller\ApiController::fromages
+
+api-fromage:
+    path: /api/fromage/{id}
+    controller: App\Controller\ApiController::fromage
+
+api-types:
+    path: /api/type
+    controller: App\Controller\ApiController::types
+
+api-type:
+    path: /api/type/{id}
+    controller: App\Controller\ApiController::type
+
+api-laits:
+    path: /api/lait
+    controller: App\Controller\ApiController::laits
+
+api-lait:
+    path: /api/lait/{id}
+    controller: App\Controller\ApiController::lait
