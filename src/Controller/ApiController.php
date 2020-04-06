@@ -51,7 +51,7 @@ class ApiController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            $nom = $body['nom'];
+            $nom = $body['nom'] ?? null;
             if ($nom == null || $nom == '') {
                 return new JsonResponse([
                     "valid" => false,
@@ -59,7 +59,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $origine = $body['origine'];
+            $origine = $body['origine'] ?? null;
             if ($origine == null || $origine == '') {
                 return new JsonResponse([
                     "valid" => false,
@@ -67,7 +67,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_type = $body['type'];
+            $id_type = $body['type'] ?? null;
             if ($id_type == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -82,7 +82,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_lait = $body['lait'];
+            $id_lait = $body['lait'] ?? null;
             if ($id_lait == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -97,7 +97,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $prix = $body['prix'];
+            $prix = $body['prix'] ?? null;
             if ($prix == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -105,7 +105,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $img = $body['img'];
+            $img = $body['img'] ?? null;
 
             $fromage = new Fromage();
             $fromage->setNom($nom);
@@ -161,7 +161,7 @@ class ApiController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            $nom = $body['nom'];
+            $nom = $body['nom'] ?? null;
             if ($nom == null || $nom == '') {
                 return new JsonResponse([
                     "valid" => false,
@@ -169,7 +169,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $origine = $body['origine'];
+            $origine = $body['origine'] ?? null;
             if ($origine == null || $origine == '') {
                 return new JsonResponse([
                     "valid" => false,
@@ -177,7 +177,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_type = $body['type'];
+            $id_type = $body['type'] ?? null;
             if ($id_type == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -192,7 +192,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_lait = $body['lait'];
+            $id_lait = $body['lait'] ?? null;
             if ($id_lait == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -207,7 +207,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $prix = $body['prix'];
+            $prix = $body['prix'] ?? null;
             if ($prix == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -215,7 +215,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $img = $body['img'];
+            $img = $body['img'] ?? null;
 
             $fromage->setNom($nom);
             $fromage->setOrigine($origine);
