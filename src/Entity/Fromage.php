@@ -42,7 +42,7 @@ class Fromage
      *
      * @ORM\ManyToOne(targetEntity="Lait", inversedBy="fromages")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="lait", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="lait", referencedColumnName="id", nullable=false)
      * })
      */
     private $lait;
@@ -52,7 +52,7 @@ class Fromage
      *
      * @ORM\ManyToOne(targetEntity="Type", inversedBy="fromages")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="type", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="type", referencedColumnName="id", nullable=false)
      * })
      */
     private $type;
@@ -60,7 +60,7 @@ class Fromage
     /**
      * @var string
      *
-     * @ORM\Column(name="img", type="string", length=256, nullable=true)
+     * @ORM\Column(name="img", type="string", length=256)
      */
     private $img;
 
@@ -115,7 +115,7 @@ class Fromage
         return $this->img;
     }
 
-    public function setImg(string $img): self
+    public function setImg(?string $img): self
     {
         $this->img = $img;
 
@@ -127,7 +127,7 @@ class Fromage
         return $this->lait;
     }
 
-    public function setLait(?Lait $lait): self
+    public function setLait(Lait $lait): self
     {
         $this->lait = $lait;
 
@@ -139,7 +139,7 @@ class Fromage
         return $this->type;
     }
 
-    public function setType(?Type $type): self
+    public function setType(Type $type): self
     {
         $this->type = $type;
 
