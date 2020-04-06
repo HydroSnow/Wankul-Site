@@ -18,6 +18,11 @@ class ApiController extends AbstractController
      * @Route("/api/fromage", name="api-fromages")
      */
     public function fromages(Request $request) {
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
+
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Fromage::class);
 
@@ -44,7 +49,7 @@ class ApiController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            $nom = $request->request->get('nom');
+            $nom = $body['nom'];
             if ($nom == null || $nom == '') {
                 return new JsonResponse([
                     "valid" => false,
@@ -52,7 +57,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $origine = $request->request->get('origine');
+            $origine = $body['origine'];
             if ($origine == null || $origine == '') {
                 return new JsonResponse([
                     "valid" => false,
@@ -60,7 +65,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_lait = $request->request->get('lait');
+            $id_lait = $body['lait'];
             if ($id_lait == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -75,7 +80,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_type = $request->request->get('type');
+            $id_type = $body['type'];
             if ($id_type == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -90,7 +95,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $prix = $request->request->get('prix');
+            $prix = $body['prix'];
             if ($prix == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -98,7 +103,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $img = $request->request->get('img');
+            $img = $body['img'];
 
             $fromage = new Fromage();
             $fromage->setNom($nom);
@@ -135,6 +140,11 @@ class ApiController extends AbstractController
      * @Route("/api/fromage/{id}", name="api-fromage")
      */
     public function fromage(Request $request, $id) {
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
+
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Fromage::class);
 
@@ -147,7 +157,7 @@ class ApiController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            $nom = $request->request->get('nom');
+            $nom = $body['nom'];
             if ($nom == null || $nom == '') {
                 return new JsonResponse([
                     "valid" => false,
@@ -155,7 +165,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $origine = $request->request->get('origine');
+            $origine = $body['origine'];
             if ($origine == null || $origine == '') {
                 return new JsonResponse([
                     "valid" => false,
@@ -163,7 +173,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_lait = $request->request->get('lait');
+            $id_lait = $body['lait'];
             if ($id_lait == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -178,7 +188,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_type = $request->request->get('type');
+            $id_type = $body['type'];
             if ($id_type == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -193,7 +203,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $prix = $request->request->get('prix');
+            $prix = $body['prix'];
             if ($prix == null) {
                 return new JsonResponse([
                     "valid" => false,
@@ -201,7 +211,7 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $img = $request->request->get('img');
+            $img = $body['img'];
 
             $fromage->setNom($nom);
             $fromage->setOrigine($origine);
