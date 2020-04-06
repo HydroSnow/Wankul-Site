@@ -60,7 +60,7 @@ class Fromage
     /**
      * @var string
      *
-     * @ORM\Column(name="img", type="string", length=256, nullable=false)
+     * @ORM\Column(name="img", type="string", length=256, nullable=true)
      */
     private $img;
 

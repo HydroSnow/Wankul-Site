@@ -93,8 +93,8 @@ CREATE TABLE `fromage` (
   `id` int(11) NOT NULL,
   `nom` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `origine` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `type` int(11) DEFAULT NULL,
-  `lait` int(11) DEFAULT NULL,
+  `type` int(11) NOT NULL,
+  `lait` int(11) NOT NULL,
   `img` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
   `prix` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
