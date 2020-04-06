@@ -160,7 +160,7 @@ class ApiController extends AbstractController
             ]);
         }
 
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod('PUT')) {
             $nom = $body['nom'] ?? null;
             if ($nom == null || $nom == '') {
                 return new JsonResponse([
