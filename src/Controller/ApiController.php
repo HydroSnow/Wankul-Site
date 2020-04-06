@@ -24,10 +24,12 @@ class ApiController extends AbstractController
         }
 
         $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(Fromage::class);
+        $repo_fromage = $em->getRepository(Fromage::class);
+        $repo_type = $em->getRepository(Type::class);
+        $repo_lait = $em->getRepository(Lait::class);
 
         if ($request->isMethod('GET')) {
-            $fromages = $repo->findAll();
+            $fromages = $repo_fromage->findAll();
 
             $list = [];
             foreach ($fromages as $fromage) {
@@ -65,21 +67,6 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_lait = $body['lait'];
-            if ($id_lait == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Le lait est manquant."
-                ]);
-            }
-            $lait = $repo->find($id_lait);
-            if ($lait == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Le lait est introuvable."
-                ]);
-            }
-
             $id_type = $body['type'];
             if ($id_type == null) {
                 return new JsonResponse([
@@ -87,11 +74,26 @@ class ApiController extends AbstractController
                     "error" => "Le type est manquant."
                 ]);
             }
-            $type = $repo->find($id_type);
+            $type = $repo_type->find($id_type);
             if ($type == null) {
                 return new JsonResponse([
                     "valid" => false,
                     "error" => "Le type est introuvable."
+                ]);
+            }
+
+            $id_lait = $body['lait'];
+            if ($id_lait == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le lait est manquant."
+                ]);
+            }
+            $lait = $repo_lait->find($id_lait);
+            if ($lait == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le lait est introuvable."
                 ]);
             }
 
@@ -146,9 +148,11 @@ class ApiController extends AbstractController
         }
 
         $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(Fromage::class);
+        $repo_fromage = $em->getRepository(Fromage::class);
+        $repo_type = $em->getRepository(Type::class);
+        $repo_lait = $em->getRepository(Lait::class);
 
-        $fromage = $repo->find($id);
+        $fromage = $repo_fromage->find($id);
         if ($fromage == null) {
             return new JsonResponse([
                 "valid" => false,
@@ -173,21 +177,6 @@ class ApiController extends AbstractController
                 ]);
             }
 
-            $id_lait = $body['lait'];
-            if ($id_lait == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Le lait est manquant."
-                ]);
-            }
-            $lait = $repo->find($id_lait);
-            if ($lait == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Le lait est introuvable."
-                ]);
-            }
-
             $id_type = $body['type'];
             if ($id_type == null) {
                 return new JsonResponse([
@@ -195,11 +184,26 @@ class ApiController extends AbstractController
                     "error" => "Le type est manquant."
                 ]);
             }
-            $type = $repo->find($id_type);
+            $type = $repo_type->find($id_type);
             if ($type == null) {
                 return new JsonResponse([
                     "valid" => false,
                     "error" => "Le type est introuvable."
+                ]);
+            }
+
+            $id_lait = $body['lait'];
+            if ($id_lait == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le lait est manquant."
+                ]);
+            }
+            $lait = $repo_lait->find($id_lait);
+            if ($lait == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le lait est introuvable."
                 ]);
             }
 
