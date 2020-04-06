@@ -43,19 +43,6 @@ class ApiController extends AbstractController
             ]);
         }
 
-        return new JsonResponse([
-            "valid" => false,
-            "error" => "La requete est invalide."
-        ]);
-    }
-
-    /**
-     * @Route("/api/fromage/{id}", name="api-fromage")
-     */
-    public function fromage(Request $request, $id) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(Fromage::class);
-
         if ($request->isMethod('POST')) {
             $nom = $request->request->get('nom');
             $origine = $request->request->get('origine');
@@ -102,15 +89,73 @@ class ApiController extends AbstractController
             ]);
         }
 
-        if ($request->isMethod('DELETE')) {
-            $fromage = $repo->find($id);
-            if ($fromage == null) {
+        return new JsonResponse([
+            "valid" => false,
+            "error" => "La requete est invalide."
+        ]);
+    }
+
+    /**
+     * @Route("/api/fromage/{id}", name="api-fromage")
+     */
+    public function fromage(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(Fromage::class);
+
+        $fromage = $repo->find($id);
+        if ($fromage == null) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Des identifiants n'ont pas pu etre trouves"
+            ]);
+        }
+
+        if ($request->isMethod('POST')) {
+            $nom = $request->request->get('nom');
+            $origine = $request->request->get('origine');
+            $id_lait = $request->request->get('lait');
+            $id_type = $request->request->get('type');
+            $prix = $request->request->get('prix');
+            if ($nom == null || $origine == null || $id_lait == null || $id_type == null || $prix == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Il manque des arguments"
+                ]);
+            }
+
+            $lait = $repo->find($id_lait);
+            $type = $repo->find($id_type);
+            if ($lait == null || $type == null) {
                 return new JsonResponse([
                     "valid" => false,
                     "error" => "Des identifiants n'ont pas pu etre trouves"
                 ]);
             }
 
+            $fromage->setNom($nom);
+            $fromage->setOrigine($origine);
+            $fromage->setLait($lait);
+            $fromage->setType($type);
+            $fromage->setPrix($prix);
+
+            $em->persist($fromage);
+            $em->flush();
+
+            return new JsonResponse([
+                "valid" => true,
+                "result" => [
+                    'id' => $fromage->getId(),
+                    'nom' => $fromage->getNom(),
+                    'origine' => $fromage->getOrigine(),
+                    'lait' => $fromage->getLait()->getId(),
+                    'type' => $fromage->getType()->getId(),
+                    'img' => $fromage->getImg(),
+                    'prix' => $fromage->getPrix()
+                ]
+            ]);
+        }
+
+        if ($request->isMethod('DELETE')) {
             $em->remove($fromage);
             $em->flush();
 
