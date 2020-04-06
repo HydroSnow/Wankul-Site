@@ -45,25 +45,60 @@ class ApiController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $nom = $request->request->get('nom');
-            $origine = $request->request->get('origine');
-            $id_lait = $request->request->get('lait');
-            $id_type = $request->request->get('type');
-            $prix = $request->request->get('prix');
-            if ($nom == null || $origine == null || $id_lait == null || $id_type == null || $prix == null) {
+            if ($nom == null || $nom == '') {
                 return new JsonResponse([
                     "valid" => false,
-                    "error" => "Il manque des arguments"
+                    "error" => "Le nom est invalide."
                 ]);
             }
 
-            $lait = $repo->find($id_lait);
-            $type = $repo->find($id_type);
-            if ($lait == null || $type == null) {
+            $origine = $request->request->get('origine');
+            if ($origine == null || $origine == '') {
                 return new JsonResponse([
                     "valid" => false,
-                    "error" => "Des identifiants n'ont pas pu etre trouves"
+                    "error" => "L'origine est invalide."
                 ]);
             }
+
+            $id_lait = $request->request->get('lait');
+            if ($id_lait == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le lait est manquant."
+                ]);
+            }
+            $lait = $repo->find($id_lait);
+            if ($lait == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le lait est introuvable."
+                ]);
+            }
+
+            $id_type = $request->request->get('type');
+            if ($id_type == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le type est manquant."
+                ]);
+            }
+            $type = $repo->find($id_type);
+            if ($type == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le type est introuvable."
+                ]);
+            }
+
+            $prix = $request->request->get('prix');
+            if ($prix == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le prix est invalide."
+                ]);
+            }
+
+            $img = $request->request->get('img');
 
             $fromage = new Fromage();
             $fromage->setNom($nom);
@@ -71,6 +106,7 @@ class ApiController extends AbstractController
             $fromage->setLait($lait);
             $fromage->setType($type);
             $fromage->setPrix($prix);
+            $fromage->setImg($img);
 
             $em->persist($fromage);
             $em->flush();
@@ -112,31 +148,67 @@ class ApiController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $nom = $request->request->get('nom');
-            $origine = $request->request->get('origine');
-            $id_lait = $request->request->get('lait');
-            $id_type = $request->request->get('type');
-            $prix = $request->request->get('prix');
-            if ($nom == null || $origine == null || $id_lait == null || $id_type == null || $prix == null) {
+            if ($nom == null || $nom == '') {
                 return new JsonResponse([
                     "valid" => false,
-                    "error" => "Il manque des arguments"
+                    "error" => "Le nom est invalide."
                 ]);
             }
 
-            $lait = $repo->find($id_lait);
-            $type = $repo->find($id_type);
-            if ($lait == null || $type == null) {
+            $origine = $request->request->get('origine');
+            if ($origine == null || $origine == '') {
                 return new JsonResponse([
                     "valid" => false,
-                    "error" => "Des identifiants n'ont pas pu etre trouves"
+                    "error" => "L'origine est invalide."
                 ]);
             }
+
+            $id_lait = $request->request->get('lait');
+            if ($id_lait == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le lait est manquant."
+                ]);
+            }
+            $lait = $repo->find($id_lait);
+            if ($lait == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le lait est introuvable."
+                ]);
+            }
+
+            $id_type = $request->request->get('type');
+            if ($id_type == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le type est manquant."
+                ]);
+            }
+            $type = $repo->find($id_type);
+            if ($type == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le type est introuvable."
+                ]);
+            }
+
+            $prix = $request->request->get('prix');
+            if ($prix == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le prix est invalide."
+                ]);
+            }
+
+            $img = $request->request->get('img');
 
             $fromage->setNom($nom);
             $fromage->setOrigine($origine);
             $fromage->setLait($lait);
             $fromage->setType($type);
             $fromage->setPrix($prix);
+            $fromage->setImg($img);
 
             $em->persist($fromage);
             $em->flush();
