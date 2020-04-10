@@ -229,7 +229,7 @@ class ApiController extends AbstractController
 
             return new JsonResponse([
                 "valid" => true,
-                "result" => [
+                "result" => array([
                     'id' => $fromage->getId(),
                     'nom' => $fromage->getNom(),
                     'origine' => $fromage->getOrigine(),
@@ -237,7 +237,7 @@ class ApiController extends AbstractController
                     'type' => $fromage->getType()->getId(),
                     'img' => $fromage->getImg(),
                     'prix' => $fromage->getPrix()
-                ]
+                ])
             ]);
         }
 
