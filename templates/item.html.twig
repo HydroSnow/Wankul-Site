@@ -58,7 +58,7 @@
         </button>
       </div>
       <div class="modal-body">
-      <form class="form-signin text-center bg-white" action="{{ path('addToCart', { 'id': fromage.id }) }}" method="post">
+      <form class="form-signin text-center bg-white" action="{{ path('add-to-cart', { 'id': fromage.id }) }}" method="post">
           <a> Quantité : <input type="number" name="_qt" value="1" step="1" min="1" max="999"></a>
       </div>
       <div class="modal-footer">

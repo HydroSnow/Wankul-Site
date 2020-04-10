@@ -40,7 +40,7 @@
                       {% set total = total + fromage['id'].prix * fromage['quantity'] %}
                       <tr>
                           <td> {{ fromage['id'].nom }} </td> <td>{{ fromage['id'].prix }}€</td> <td>{{ fromage['quantity'] }}</td>
-                          <td><a href="{{ path('removeToCart', { 'id': fromage['id'].id }) }}"  style="background-color:red;border-color:red;" class="btn btn-success pt-0 pr-2 pl-2 pb-0"> X </a></td>
+                          <td><a href="{{ path('remove-to-cart', { 'id': fromage['id'].id }) }}"  style="background-color:red;border-color:red;" class="btn btn-success pt-0 pr-2 pl-2 pb-0"> X </a></td>
                       <tr>
                       {% endfor %}
                       <tr>
