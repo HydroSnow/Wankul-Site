@@ -30,7 +30,7 @@
                         {% endfor %}
                     </p>
                     <p>{{ avi.texte }}</p>
-                    <small class="text-muted">Par <a href="{{ path('user', { id: avi.utilisateur.id }) }}">{{ avi.utilisateur.nom }}</a>, le 20 septembre 2019</small>
+                    <small class="text-muted">Par <a href="{{ path('user', { id: avi.utilisateur.id }) }}">{{ avi.utilisateur.nom }}</a></small>
                     <hr>
                 {% endfor %}
                 <a href="#" class="btn btn-success">Donner un avis</a>

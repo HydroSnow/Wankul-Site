@@ -14,15 +14,20 @@
     <div class="col-lg-8 my-4">
 
         <div class="card card-outline-secondary my-4">
-            <div class="card-header">Avis</div>
             <div class="card-body">
-                    <p class="text-warning">
-                    </p>
-                    <p></p>
-                    <small class="text-muted">Par , le 20 septembre 2019</small>
+                <p>{{ selected.avis|length }} avis</p>
+                {% for avi in selected.avis %}
                     <hr>
-                <a href="#" class="btn btn-success">Donner un avis</a>
+                    <p><a href="{{ path('item', { 'id': avi.fromage.id }) }}">{{ avi.fromage.nom }}</a></p>
+                    <p class="text-warning">
+                        {% for i in 1..5 %}
+                            {{ avi.note >= i ? "&#9733; " : "&#9734;" }}
+                        {% endfor %}
+                    </p>
+                    <p>"{{ avi.texte }}"</p>
+                {% endfor %}
             </div>
+
         </div> <!-- /.card -->
 
     </div> <!-- /.col-lg-4 -->
