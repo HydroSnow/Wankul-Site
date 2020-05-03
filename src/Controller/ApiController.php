@@ -113,6 +113,7 @@ class ApiController extends AbstractController
         $repo_fromage = $em->getRepository(Fromage::class);
         $repo_type = $em->getRepository(Type::class);
         $repo_lait = $em->getRepository(Lait::class);
+        $repo_token = $em->getRepository(Token::class);
 
         // get (get fromage list)
         if ($request->isMethod('GET')) {
@@ -139,6 +140,28 @@ class ApiController extends AbstractController
 
         // post (post new fromage)
         if ($request->isMethod('POST')) {
+            // token verification
+            if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+
             // parameters verification
             $nom = $body['nom'] ?? null;
             if ($nom == null || $nom == '') {
@@ -245,6 +268,7 @@ class ApiController extends AbstractController
         $repo_fromage = $em->getRepository(Fromage::class);
         $repo_type = $em->getRepository(Type::class);
         $repo_lait = $em->getRepository(Lait::class);
+        $repo_token = $em->getRepository(Token::class);
 
         // find fromage
         $fromage = $repo_fromage->find($id);
@@ -257,6 +281,28 @@ class ApiController extends AbstractController
 
         // put (modify one)
         if ($request->isMethod('PUT')) {
+            // token verification
+            if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+
             // parameters verification
             $nom = $body['nom'] ?? null;
             if ($nom == null || $nom == '') {
@@ -342,6 +388,28 @@ class ApiController extends AbstractController
 
         // delete (delete one fromage)
         if ($request->isMethod('DELETE')) {
+            // token verification
+            if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+
             // entity removal
             $em->remove($fromage);
             $em->flush();
