@@ -5,8 +5,13 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Form\RegistrationFormType;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Twig\Environment;
+use App\Entity\Utilisateur;
+use App\Entity\Role;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LoginController extends AbstractController
@@ -33,14 +38,40 @@ class LoginController extends AbstractController
     }
 
     /**
-     * @Route("/registration/", name="registration")
+     * @Route("/logout/", name="logout")
      */
     public function logout()
     {
         return $this->redirectToRoute('index');
     }
 
-    public function registration(Environment $twig, AuthenticationUtils $authenticationUtils) {
-       return new Response("yo");
+     /**
+     * @Route("/registration/", name="registration")
+     */
+    public function registration(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    {
+        $user = new Utilisateur();
+
+        if (isset($_POST['password']) && isset($_POST['username'])) {
+            // encode the password
+            $user->setMdp(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $_POST['password']
+                )
+            );
+            $user->setNom($_POST['username']);
+
+            $em = $this->getDoctrine()->getManager();
+            $role = $em->getRepository(Role::class)->find(3);
+            $user->setRole($role);
+
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirectToRoute('login');
+        }
+
+        return $this->render('registration.html.twig');
     }
 }

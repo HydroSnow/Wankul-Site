@@ -58,21 +58,16 @@
     </style>
 {% endblock %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Inscription{% endblock %}
 {% block body %}
-    <form class="form-signin text-center bg-white" action="{{ path('login') }}" method="post">
-        <h1 class="h3 my-3 font-weight-normal">Connexion</h1>
-        {% if error %}
-            <div class="my-3">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
-        <label for="username" class="sr-only">Nom d'utilisateur</label>
-        <input id="username" name="_username" class="form-control" placeholder="Nom d'utilisateur" required autofocus />
-        <label for="password" class="sr-only">Mot de passe</label>
-        <input type="password" id="password" name="_password" class="form-control" placeholder="Mot de passe" required />
+    <form class="form-signin text-center bg-white" action="{{ path('registration') }}" method="post">
+        <h1 class="h3 my-3 font-weight-normal">Inscription</h1>
+        <input id="nom" name="username" class="form-control" placeholder="Nom d'utilisateur" required autofocus />
+        <input type="password" id="password" name="password" class="form-control" placeholder="Mot de passe" required />
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">C'est parti</button>
-        <a href="{{ path('registration') }}" style="pt-2" class="btn" role="button">Pas encore inscrit ?</a>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">S'inscrire !</button>
         <p class="my-3 text-muted">Les Fromageries Wankul &copy; {{ "now"|date('Y') }}</p>
     </form>
-    
+
+   
 {% endblock %}
