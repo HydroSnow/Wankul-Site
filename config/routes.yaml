@@ -56,6 +56,10 @@ command-final:
     path: /commandFinal/
     controller: App\Controller\CartController::commandFinal
 
+api-login:
+    path: /api/login
+    controller: App\Controller\ApiController::login
+
 api-fromages:
     path: /api/fromage
     controller: App\Controller\ApiController::fromages

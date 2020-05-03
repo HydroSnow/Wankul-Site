@@ -6,8 +6,11 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+use App\Entity\Utilisateur;
+use App\Entity\Token;
 use App\Entity\Fromage;
 use App\Entity\Type;
 use App\Entity\Lait;
@@ -15,19 +18,104 @@ use App\Entity\Lait;
 class ApiController extends AbstractController
 {
     /**
-     * @Route("/api/fromage", name="api-fromages")
+     * @Route("/api/login", name="api-login")
      */
-    public function fromages(Request $request) {
+    public function login(Request $request, UserPasswordEncoderInterface $passwordEncoder) {
         $body = [];
         if ($content = $request->getContent()) {
             $body = json_decode($content, true);
         }
 
         $em = $this->getDoctrine()->getManager();
+        $repo_user = $em->getRepository(Utilisateur::class);
+        $repo_token = $em->getRepository(Token::class);
+
+        if ($request->isMethod('POST')) {
+            // username verification
+            $username = $body['username'] ?? null;
+            if ($username == null || $username == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le nom d'utilisateur est invalide."
+                ]);
+            }
+
+            // user retrieval
+            $user = $repo_user->findOneBy([ "nom" => $username ]);
+            if ($user == null) {
+                return new JsonResponse([
+                    "valid" => false, "error" => "Le nom d'utilisateur ne correspond à aucune entrée."
+                ]);
+            }
+
+            // password verification
+            $password = $body['password'] ?? null;
+            if ($password == null || $password == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le mot de passe est invalide."
+                ]);
+            }
+
+            // password checking
+            if ($passwordEncoder->isPasswordValid($user, $password) == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le mot de passe est incorrect."
+                ]);
+            }
+
+            // entity generation
+            $token = new Token();
+
+            $token->setUser($user);
+
+            $validBefore = new \DateTime();
+            $validBefore->modify('-10 minute');
+            $token->setValidbefore($validBefore);
+
+            $validAfter = new \DateTime();
+            $validAfter->modify('+1 day');
+            $token->setValidafter($validAfter);
+
+            $em->persist($token);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true,
+                "result" => [
+                    "id" => $token->getId(),
+                    "valid_before" => $validBefore,
+                    "valid_after" => $validAfter
+                ]
+            ]);
+        }
+
+        return new JsonResponse([
+            "valid" => false,
+            "error" => "La requete est invalide."
+        ]);
+    }
+
+    /**
+     * @Route("/api/fromage", name="api-fromages")
+     */
+    public function fromages(Request $request) {
+        // parameters
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
+
+        // entities repo
+        $em = $this->getDoctrine()->getManager();
         $repo_fromage = $em->getRepository(Fromage::class);
         $repo_type = $em->getRepository(Type::class);
         $repo_lait = $em->getRepository(Lait::class);
+        $repo_token = $em->getRepository(Token::class);
 
+        // get (get fromage list)
         if ($request->isMethod('GET')) {
             $fromages = $repo_fromage->findAll();
 
@@ -50,7 +138,31 @@ class ApiController extends AbstractController
             ]);
         }
 
+        // post (post new fromage)
         if ($request->isMethod('POST')) {
+            // token verification
+            if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+
+            // parameters verification
             $nom = $body['nom'] ?? null;
             if ($nom == null || $nom == '') {
                 return new JsonResponse([
@@ -107,6 +219,7 @@ class ApiController extends AbstractController
 
             $img = $body['img'] ?? null;
 
+            // entity creation
             $fromage = new Fromage();
             $fromage->setNom($nom);
             $fromage->setOrigine($origine);
@@ -118,6 +231,7 @@ class ApiController extends AbstractController
             $em->persist($fromage);
             $em->flush();
 
+            // response
             return new JsonResponse([
                 "valid" => true,
                 "result" => array([
@@ -132,6 +246,7 @@ class ApiController extends AbstractController
             ]);
         }
 
+        // if method not known
         return new JsonResponse([
             "valid" => false,
             "error" => "La requete est invalide."
@@ -142,16 +257,20 @@ class ApiController extends AbstractController
      * @Route("/api/fromage/{id}", name="api-fromage")
      */
     public function fromage(Request $request, $id) {
+        // parameters
         $body = [];
         if ($content = $request->getContent()) {
             $body = json_decode($content, true);
         }
 
+        // entities repo
         $em = $this->getDoctrine()->getManager();
         $repo_fromage = $em->getRepository(Fromage::class);
         $repo_type = $em->getRepository(Type::class);
         $repo_lait = $em->getRepository(Lait::class);
+        $repo_token = $em->getRepository(Token::class);
 
+        // find fromage
         $fromage = $repo_fromage->find($id);
         if ($fromage == null) {
             return new JsonResponse([
@@ -160,7 +279,31 @@ class ApiController extends AbstractController
             ]);
         }
 
+        // put (modify one)
         if ($request->isMethod('PUT')) {
+            // token verification
+            if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+
+            // parameters verification
             $nom = $body['nom'] ?? null;
             if ($nom == null || $nom == '') {
                 return new JsonResponse([
@@ -217,6 +360,7 @@ class ApiController extends AbstractController
 
             $img = $body['img'] ?? null;
 
+            // entity set
             $fromage->setNom($nom);
             $fromage->setOrigine($origine);
             $fromage->setLait($lait);
@@ -227,6 +371,7 @@ class ApiController extends AbstractController
             $em->persist($fromage);
             $em->flush();
 
+            // response
             return new JsonResponse([
                 "valid" => true,
                 "result" => array([
@@ -241,15 +386,41 @@ class ApiController extends AbstractController
             ]);
         }
 
+        // delete (delete one fromage)
         if ($request->isMethod('DELETE')) {
+            // token verification
+            if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+
+            // entity removal
             $em->remove($fromage);
             $em->flush();
 
+            // response
             return new JsonResponse([
                 "valid" => true
             ]);
         }
 
+        // unknown method
         return new JsonResponse([
             "valid" => false,
             "error" => "La requete est invalide."
