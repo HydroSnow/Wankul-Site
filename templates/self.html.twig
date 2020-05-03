@@ -16,17 +16,9 @@
     <div class="col-lg-4 my-4">
         <div class="card h-100">
             <img class="card-img-top" src="/static/icons/panier.jpg" alt="">
-            <div class="card-body">
-                <h4 class="card-title">
-                    Panier
-                </h4>
-                <p class="card-text">
-                    Voir votre panier et passer commande.
-                </p>
-            </div>
             <div class="card-footer">
                 <a href="{{ path('cart') }}">
-                    <button class="btn btn-lg btn-primary btn-block">C'est parti</button>
+                    <button class="btn btn-lg btn-primary btn-block">Panier</button>
                 </a>
             </div>
         </div>
@@ -35,55 +27,9 @@
     <div class="col-lg-4 my-4">
         <div class="card h-100">
             <img class="card-img-top" src="/static/icons/utilisateur.jpg" alt="">
-            <div class="card-body">
-                <h4 class="card-title">
-                    Accès utilisateur
-                </h4>
-                <p class="card-text">
-                    Accéder et modifier vos informations utilisateur.
-                </p>
-            </div>
             <div class="card-footer">
                 <a href="{{ path('user', { id: app.user.id }) }}">
-                    <button class="btn btn-lg btn-primary btn-block">C'est parti</button>
-                </a>
-            </div>
-        </div>
-    </div> <!-- /.col-lg-4 -->
-
-    <div class="col-lg-4 my-4">
-        <div class="card h-100">
-            <img class="card-img-top" src="/static/icons/fournisseur.jpg" alt="">
-            <div class="card-body">
-                <h4 class="card-title">
-                    Fournisseur
-                </h4>
-                <p class="card-text">
-                    Gérer les stocks des produits du site.
-                </p>
-            </div>
-            <div class="card-footer">
-                <a href="#">
-                    <button class="btn btn-lg btn-primary btn-block">C'est parti</button>
-                </a>
-            </div>
-        </div>
-    </div> <!-- /.col-lg-4 -->
-
-    <div class="col-lg-4 my-4">
-        <div class="card h-100 ">
-            <img class="card-img-top" src="/static/icons/administrateur.jpg" alt="">
-            <div class="card-body">
-                <h4 class="card-title">
-                    Administrateur
-                </h4>
-                <p class="card-text">
-                    Ajouter, modifier ou supprimer des produits.
-                </p>
-            </div>
-            <div class="card-footer">
-                <a href="#">
-                    <button class="btn btn-lg btn-primary btn-block">C'est parti</button>
+                    <button class="btn btn-lg btn-primary btn-block">Page utilisateur</button>
                 </a>
             </div>
         </div>
@@ -92,17 +38,9 @@
     <div class="col-lg-4 my-4">
         <div class="card h-100 ">
             <img class="card-img-top" src="/static/icons/deconnexion.jpg" alt="">
-            <div class="card-body">
-                <h4 class="card-title">
-                    Déconnexion
-                </h4>
-                <p class="card-text">
-                    Se déconnecter du site.
-                </p>
-            </div>
             <div class="card-footer">
                 <a href="{{ path('logout') }}">
-                    <button class="btn btn-lg btn-danger btn-block">C'est parti</button>
+                    <button class="btn btn-lg btn-danger btn-block">Déconnexion</button>
                 </a>
             </div>
         </div>

@@ -14,27 +14,30 @@ class LoginController extends AbstractController
     /**
      * @Route("/login/", name="login")
      */
-    public function login(Environment $twig, AuthenticationUtils $authenticationUtils)
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        $content = $twig->render('login.html.twig', [
+        return $this->render('login.html.twig', [
             'username' => $lastUsername,
             'error' => $error
         ]);
-        return new Response($content);
     }
 
     /**
      * @Route("/registration/", name="registration")
      */
-    public function logout(Environment $twig, AuthenticationUtils $authenticationUtils)
+    public function logout()
     {
-        return new Response("yo");
+        return $this->redirectToRoute('index');
     }
 
     public function registration(Environment $twig, AuthenticationUtils $authenticationUtils) {

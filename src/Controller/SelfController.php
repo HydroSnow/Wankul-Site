@@ -13,9 +13,11 @@ class SelfController extends AbstractController
    /**
     * @Route("/self/", name="self")
     */
-    public function self(Environment $twig)
+    public function self()
     {
-        $content = $twig->render('self.html.twig', []);
-        return new Response($content);
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('index');
+        }
+        return $this->render('self.html.twig');
     }
 }

@@ -17,6 +17,9 @@ security:
             logout:
                 path: logout
                 target: index
+            guard:
+                authenticators:
+                    - App\Security\DefaultAuthenticator
     encoders:
         App\Entity\Utilisateur:
             algorithm: auto
