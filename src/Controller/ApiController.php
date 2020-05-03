@@ -6,14 +6,93 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+use App\Entity\Utilisateur;
+use App\Entity\Token;
 use App\Entity\Fromage;
 use App\Entity\Type;
 use App\Entity\Lait;
 
 class ApiController extends AbstractController
 {
+    /**
+     * @Route("/api/login", name="api-login")
+     */
+    public function login(Request $request, UserPasswordEncoderInterface $passwordEncoder) {
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $repo_user = $em->getRepository(Utilisateur::class);
+        $repo_token = $em->getRepository(Token::class);
+
+        if ($request->isMethod('POST')) {
+            $username = $body['username'] ?? null;
+            if ($username == null || $username == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le nom d'utilisateur est invalide."
+                ]);
+            }
+
+            $user = $repo_user->findOneBy([ "nom" => $username ]);
+            if ($user == null) {
+                return new JsonResponse([
+                    "valid" => false, "error" => "Le nom d'utilisateur ne correspond à aucune entrée."
+                ]);
+            }
+
+            $password = $body['password'] ?? null;
+            if ($password == null || $password == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le mot de passe est invalide."
+                ]);
+            }
+
+            if ($passwordEncoder->isPasswordValid($user, $password) == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le mot de passe est incorrect."
+                ]);
+            }
+
+
+            $token = new Token();
+
+            $token->setUser($user);
+
+            $validBefore = new \DateTime();
+            $validBefore->modify('-10 minute');
+            $token->setValidbefore($validBefore);
+
+            $validAfter = new \DateTime();
+            $validAfter->modify('+1 day');
+            $token->setValidafter($validAfter);
+
+            $em->persist($token);
+            $em->flush();
+
+            return new JsonResponse([
+                "valid" => true,
+                "result" => [
+                    "id" => $token->getId(),
+                    "valid_before" => $validBefore,
+                    "valid_after" => $validAfter
+                ]
+            ]);
+        }
+
+        return new JsonResponse([
+            "valid" => false,
+            "error" => "La requete est invalide."
+        ]);
+    }
+
     /**
      * @Route("/api/fromage", name="api-fromages")
      */
