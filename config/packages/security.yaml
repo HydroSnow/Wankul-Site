@@ -19,7 +19,7 @@ security:
                 target: index
             guard:
                 authenticators:
-                    - App\Security\AppCustomAuthenticator
+                    - App\Security\DefaultAuthenticator
     encoders:
         App\Entity\Utilisateur:
             algorithm: auto
