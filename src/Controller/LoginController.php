@@ -30,10 +30,14 @@ class LoginController extends AbstractController
     }
 
     /**
-     * @Route("/logout/", name="logout")
+     * @Route("/registration/", name="registration")
      */
     public function logout(Environment $twig, AuthenticationUtils $authenticationUtils)
     {
         return new Response("yo");
+    }
+
+    public function registration(Environment $twig, AuthenticationUtils $authenticationUtils) {
+       return new Response("yo");
     }
 }

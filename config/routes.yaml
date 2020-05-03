@@ -32,6 +32,10 @@ logout:
     path: /logout/
     controller: App\Controller\LoginController::logout
 
+registration:
+    path: /registration/
+    controller: App\Controller\LoginController::registration
+
 cart:
     path: /cart/
     controller: App\Controller\CartController::cart

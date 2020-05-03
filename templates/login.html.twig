@@ -71,6 +71,7 @@
         <input type="password" id="password" name="_password" class="form-control" placeholder="Mot de passe" required />
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         <button class="btn btn-lg btn-primary btn-block" type="submit">C'est parti</button>
+        <a href="{{ path('registration') }}" style="pt-2" class="btn" role="button">Pas encore inscrit ?</a>
         <p class="my-3 text-muted">Les Fromageries Wankul &copy; {{ "now"|date('Y') }}</p>
     </form>
 {% endblock %}
