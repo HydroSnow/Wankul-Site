@@ -15,23 +15,22 @@ class Token
     /**
      * @var string
      *
-     * @ORM\Column(name="id", type="string", length=32, nullable=false)
+     * @ORM\Column(name="id", type="string", length=128, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="validAfter", type="date", nullable=false)
+     * @ORM\Column(name="validAfter", type="datetime", nullable=false)
      */
     private $validafter;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="validBefore", type="date", nullable=false)
+     * @ORM\Column(name="validBefore", type="datetime", nullable=false)
      */
     private $validbefore;
 
@@ -44,6 +43,11 @@ class Token
      * })
      */
     private $user;
+
+    public function __construct()
+    {
+        $this->id = hash("sha256", rand());
+    }
 
     public function getId(): ?string
     {
