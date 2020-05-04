@@ -83,3 +83,11 @@ api-laits:
 api-lait:
     path: /api/lait/{id}
     controller: App\Controller\ApiController::lait
+
+api-utilisateurs:
+    path: /api/utilisateur
+    controller: App\Controller\ApiController::utilisateurs
+
+api-utilisateur:
+    path: /api/utilisateur/{id}
+    controller: App\Controller\ApiController::utilisateur

@@ -14,6 +14,7 @@ use App\Entity\Token;
 use App\Entity\Fromage;
 use App\Entity\Type;
 use App\Entity\Lait;
+use App\Entity\Role;
 
 class ApiController extends AbstractController
 {
@@ -279,30 +280,30 @@ class ApiController extends AbstractController
             ]);
         }
 
-        // put (modify one)
-        if ($request->isMethod('PUT')) {
-            // token verification
-            if ($request->headers->has('X-AUTH-TOKEN') == false) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Le token est manquant."
-                ]);
-            }
-            $token_id = $request->headers->get('X-AUTH-TOKEN');
-            $token = $repo_token->find($token_id);
-            if ($token == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Le token est incorrect."
-                ]);
-            }
-            if ($token->getUser()->getRole()->getId() != 1) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "L'utilisateur n'a pas les permissions."
-                ]);
-            }
+        // token verification
+        if ($request->headers->has('X-AUTH-TOKEN') == false) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le token est manquant."
+            ]);
+        }
+        $token_id = $request->headers->get('X-AUTH-TOKEN');
+        $token = $repo_token->find($token_id);
+        if ($token == null) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le token est incorrect."
+            ]);
+        }
+        if ($token->getUser()->getRole()->getId() != 1) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "L'utilisateur n'a pas les permissions."
+            ]);
+        }
 
+        // UPDATE
+        if ($request->isMethod('PUT')) {
             // parameters verification
             $nom = $body['nom'] ?? null;
             if ($nom == null || $nom == '') {
@@ -386,30 +387,8 @@ class ApiController extends AbstractController
             ]);
         }
 
-        // delete (delete one fromage)
+        // DELETE
         if ($request->isMethod('DELETE')) {
-            // token verification
-            if ($request->headers->has('X-AUTH-TOKEN') == false) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Le token est manquant."
-                ]);
-            }
-            $token_id = $request->headers->get('X-AUTH-TOKEN');
-            $token = $repo_token->find($token_id);
-            if ($token == null) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "Le token est incorrect."
-                ]);
-            }
-            if ($token->getUser()->getRole()->getId() != 1) {
-                return new JsonResponse([
-                    "valid" => false,
-                    "error" => "L'utilisateur n'a pas les permissions."
-                ]);
-            }
-
             // entity removal
             $em->remove($fromage);
             $em->flush();
@@ -431,8 +410,14 @@ class ApiController extends AbstractController
      * @Route("/api/type", name="api-types")
      */
     public function types(Request $request) {
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
+        // parameters
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Type::class);
+        $repo_token = $em->getRepository(Token::class);
 
         if ($request->isMethod('GET')) {
             $types = $repo->findAll();
@@ -451,6 +436,55 @@ class ApiController extends AbstractController
             ]);
         }
 
+        if ($request->isMethod('POST')) {
+              // token verification
+              if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+            // parameters verification
+            $name = $body['nom'] ?? null;
+            if ($name == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le nom est manquant."
+                ]);
+            }
+            // entity creation
+            $type = new Type();
+            $type->setNom($name);
+
+            $em->persist($type);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true,
+                "result" => array([
+                    'id' => $type->getId(),
+                    'nom' => $type->getNom()
+                ])
+            ]);
+
+        }
+
+        // if method not known
         return new JsonResponse([
             "valid" => false,
             "error" => "La requete est invalide."
@@ -460,22 +494,102 @@ class ApiController extends AbstractController
     /**
      * @Route("/api/type/{id}", name="api-type")
      */
-    public function type(Request $request, $id) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(Type::class);
+    public function type(Request $request, $id) {    
+        // parameters
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
 
-        return new JsonResponse([
-            "valid" => false,
-            "error" => "La requete est invalide."
-        ]);
+        // entities repo
+        $em = $this->getDoctrine()->getManager();
+        $repo_type = $em->getRepository(Type::class);
+        $repo_token = $em->getRepository(Token::class);
+
+        // find
+        $types = $repo_type->find($id);
+        if ($types == null) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le type $types n'a pas pu etre trouve"
+            ]);
+        }
+
+        // token verification
+        if ($request->headers->has('X-AUTH-TOKEN') == false) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le token est manquant."
+            ]);
+        }
+        $token_id = $request->headers->get('X-AUTH-TOKEN');
+        $token = $repo_token->find($token_id);
+        if ($token == null) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le token est incorrect."
+            ]);
+        }
+        if ($token->getUser()->getRole()->getId() != 1) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "L'utilisateur n'a pas les permissions."
+            ]);
+        }
+
+
+        // UPDATE
+        if ($request->isMethod('PUT')) {
+            // parameters verification
+            $nom = $body['nom'] ?? null;
+            if ($nom == null || $nom == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le nom est invalide."
+                ]);
+            }
+
+            // entity set
+            $types->setNom($nom);
+
+            $em->persist($types);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true,
+                "result" => array([
+                    'id' => $types->getId(),
+                    'nom' => $types->getNom()
+                ])
+            ]);
+        }
+
+        // DELETE
+        if ($request->isMethod('DELETE')) {
+            // entity removal
+            $em->remove($types);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true
+            ]);
+        }
     }
 
     /**
      * @Route("/api/lait", name="api-laits")
      */
     public function laits(Request $request) {
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
+        // parameters
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository(Lait::class);
+        $repo_token = $em->getRepository(Token::class);
 
         if ($request->isMethod('GET')) {
             $laits = $repo->findAll();
@@ -494,6 +608,55 @@ class ApiController extends AbstractController
             ]);
         }
 
+        if ($request->isMethod('POST')) {
+              // token verification
+              if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+            // parameters verification
+            $name = $body['nom'] ?? null;
+            if ($name == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le nom est manquant."
+                ]);
+            }
+            // entity creation
+            $lait = new Lait();
+            $lait->setNom($name);
+
+            $em->persist($lait);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true,
+                "result" => array([
+                    'id' => $lait->getId(),
+                    'nom' => $lait->getNom()
+                ])
+            ]);
+
+        }
+
+        // if method not known
         return new JsonResponse([
             "valid" => false,
             "error" => "La requete est invalide."
@@ -504,13 +667,302 @@ class ApiController extends AbstractController
      * @Route("/api/lait/{id}", name="api-lait")
      */
     public function lait(Request $request, $id) {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository(Lait::class);
+        
+        // parameters
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
 
+        // entities repo
+        $em = $this->getDoctrine()->getManager();
+        $repo_lait = $em->getRepository(Lait::class);
+        $repo_token = $em->getRepository(Token::class);
+
+        // find
+        $laits = $repo_lait->find($id);
+        if ($laits == null) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le lait $laits n'a pas pu etre trouve"
+            ]);
+        }
+
+        // token verification
+        if ($request->headers->has('X-AUTH-TOKEN') == false) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le token est manquant."
+            ]);
+        }
+        $token_id = $request->headers->get('X-AUTH-TOKEN');
+        $token = $repo_token->find($token_id);
+        if ($token == null) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le token est incorrect."
+            ]);
+        }
+        if ($token->getUser()->getRole()->getId() != 1) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "L'utilisateur n'a pas les permissions."
+            ]);
+        }
+
+
+        // UPDATE
+        if ($request->isMethod('PUT')) {
+            // parameters verification
+            $nom = $body['nom'] ?? null;
+            if ($nom == null || $nom == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le nom est invalide."
+                ]);
+            }
+
+            // entity set
+            $laits->setNom($nom);
+
+            $em->persist($laits);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true,
+                "result" => array([
+                    'id' => $laits->getId(),
+                    'nom' => $laits->getNom()
+                ])
+            ]);
+        }
+
+        // DELETE
+        if ($request->isMethod('DELETE')) {
+            // entity removal
+            $em->remove($laits);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true
+            ]);
+        }
+    }
+
+    /**
+     * @Route("/api/utilisateur", name="api-utilisateurs")
+     */
+    public function utilisateurs(Request $request, UserPasswordEncoderInterface $passwordEncoder) {
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
+        // parameters
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository(Utilisateur::class);
+        $repo_token = $em->getRepository(Token::class);
+
+        if ($request->isMethod('GET')) {
+            $utilisateurs = $repo->findAll();
+
+            $list = [];
+            foreach ($utilisateurs as $utilisateur) {
+                $list[] = [
+                    'id' => $utilisateur->getId(),
+                    'nom' => $utilisateur->getNom(),
+                    'role' => $utilisateur->getRole()->getId(),
+                    'mdp' => $utilisateur->getMdp()
+                ];
+            }
+
+            return new JsonResponse([
+                "valid" => true,
+                "result" => $list
+            ]);
+        }
+
+        if ($request->isMethod('POST')) {
+              // token verification
+              if ($request->headers->has('X-AUTH-TOKEN') == false) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est manquant."
+                ]);
+            }
+            $token_id = $request->headers->get('X-AUTH-TOKEN');
+            $token = $repo_token->find($token_id);
+            if ($token == null) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le token est incorrect."
+                ]);
+            }
+            if ($token->getUser()->getRole()->getId() != 1) {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "L'utilisateur n'a pas les permissions."
+                ]);
+            }
+            // parameters verification
+            $nom = $body['nom'] ?? null;
+            if ($nom == null || $nom == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le nom est invalide."
+                ]);
+            }
+
+            $role = $body['role'] ?? null;
+            if ($role == null || $role == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le role est invalide."
+                ]);
+            }
+
+            $mdp = $body['mdp'] ?? null;
+            if ($mdp == null || $mdp == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le mot de passe est invalide."
+                ]);
+            }
+
+            // entity set
+            $utilisateurs = new Utilisateur();
+            $utilisateurs->setNom($nom);
+            $utilisateurs->setRole($em->getRepository(Role::class)->find($role));
+            $utilisateurs->setMdp($mdp);
+
+            $em->persist($utilisateurs);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true,
+                "result" => array([
+                    'id' => $utilisateurs->getId(),
+                    'nom' => $utilisateurs->getNom(),
+                    'role' => $utilisateurs->getRole()->getId(),
+                    'mdp' => $utilisateurs->getMdp()
+                ])
+            ]);
+
+        }
+
+        // if method not known
         return new JsonResponse([
             "valid" => false,
             "error" => "La requete est invalide."
         ]);
     }
 
+    /**
+     * @Route("/api/utilisateur/{id}", name="api-utilisateur")
+     */
+    public function utilisateur(Request $request, $id, UserPasswordEncoderInterface $passwordEncoder) {
+        // parameters
+        $body = [];
+        if ($content = $request->getContent()) {
+            $body = json_decode($content, true);
+        }
+
+        // entities repo
+        $em = $this->getDoctrine()->getManager();
+        $repo_utilisateur = $em->getRepository(Utilisateur::class);
+        $repo_token = $em->getRepository(Token::class);
+
+        // find
+        $utilisateurs = $repo_utilisateur->find($id);
+        if ($utilisateurs == null) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "L'utilisateur $utilisateurs n'a pas pu etre trouve"
+            ]);
+        }
+
+        // token verification
+        if ($request->headers->has('X-AUTH-TOKEN') == false) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le token est manquant."
+            ]);
+        }
+        $token_id = $request->headers->get('X-AUTH-TOKEN');
+        $token = $repo_token->find($token_id);
+        if ($token == null) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "Le token est incorrect."
+            ]);
+        }
+        if ($token->getUser()->getRole()->getId() != 1) {
+            return new JsonResponse([
+                "valid" => false,
+                "error" => "L'utilisateur n'a pas les permissions."
+            ]);
+        }
+
+
+        // UPDATE
+        if ($request->isMethod('PUT')) {
+            // parameters verification
+            $nom = $body['nom'] ?? null;
+            if ($nom == null || $nom == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le nom est invalide."
+                ]);
+            }
+
+            $role = $body['role'] ?? null;
+            if ($role == null || $role == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le role est invalide."
+                ]);
+            }
+
+            $mdp = $body['mdp'] ?? null;
+            if ($mdp == null || $mdp == '') {
+                return new JsonResponse([
+                    "valid" => false,
+                    "error" => "Le mot de passe est invalide."
+                ]);
+            }
+
+            // entity set
+            $utilisateurs->setNom($nom);
+            $utilisateurs->setRole($em->getRepository(Role::class)->find($role));
+            $utilisateurs->setMdp($mdp);
+
+            $em->persist($utilisateurs);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true,
+                "result" => array([
+                    'id' => $utilisateurs->getId(),
+                    'nom' => $utilisateurs->getNom(),
+                    'role' => $utilisateurs->getRole()->getId(),
+                    'mdp' => $utilisateurs->getMdp()
+                ])
+            ]);
+        }
+
+        // DELETE
+        if ($request->isMethod('DELETE')) {
+            // entity removal
+            $em->remove($utilisateurs);
+            $em->flush();
+
+            // response
+            return new JsonResponse([
+                "valid" => true
+            ]);
+        }
+    }
 }
