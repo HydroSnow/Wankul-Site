@@ -2,10 +2,10 @@
 -- version 4.9.1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le :  ven. 08 nov. 2019 à 08:52
--- Version du serveur :  10.4.8-MariaDB
--- Version de PHP :  7.3.10
+-- Hôte : 127.0.0.1
+-- Généré le :  ven. 15 mai 2020 à 10:22
+-- Version du serveur :  10.3.22-MariaDB-0+deb10u1
+-- Version de PHP :  7.3.14-1~deb10u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -61,7 +61,11 @@ CREATE TABLE `commande` (
 --
 
 INSERT INTO `commande` (`id`, `id_utilisateur`, `date`) VALUES
-(1, 1, '2019-11-05 00:00:00');
+(3, 1, '2019-11-08 00:00:00'),
+(4, 1, '2019-11-08 00:00:00'),
+(5, 1, '2020-04-10 00:00:00'),
+(6, 1, '2020-04-10 00:00:00'),
+(7, 10, '2020-05-15 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -81,7 +85,12 @@ CREATE TABLE `detailcommande` (
 --
 
 INSERT INTO `detailcommande` (`id`, `id_commande`, `id_fromage`, `quantite`) VALUES
-(1, 1, 8, 1);
+(3, 3, 2, 3),
+(4, 4, 14, 4),
+(5, 5, 2, 1),
+(6, 5, 5, 2),
+(7, 6, 2, 5),
+(8, 7, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -104,7 +113,7 @@ CREATE TABLE `fromage` (
 --
 
 INSERT INTO `fromage` (`id`, `nom`, `origine`, `type`, `lait`, `img`, `prix`) VALUES
-(2, 'Brie de Meaux', 'Bassin parisien', 1, 1, 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Wikicheese_-_Brie_de_Meaux_-_20150515_-_023.jpg/800px-Wikicheese_-_Brie_de_Meaux_-_20150515_-_023.jpg', 16.86),
+(2, 'Brie de Meaux', 'Bassin parisien', 1, 1, 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Wikicheese_-_Brie_de_Meaux_-_20150515_-_023.jpg/800px-Wikicheese_-_Brie_de_Meaux_-_20150515_-_023.jpg', 16.9),
 (3, 'Brie de Melun', 'Bassin parisien', 1, 1, 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Wikicheese_-_Brie_de_Melun_-_20150515_-_015.jpg/800px-Wikicheese_-_Brie_de_Melun_-_20150515_-_015.jpg', 10.41),
 (4, 'Camembert', 'Normandie', 1, 1, 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Camembert_de_Normandie_%28AOP%29_02.jpg/800px-Camembert_de_Normandie_%28AOP%29_02.jpg', 1.48),
 (5, 'Chaource', 'Champagne', 1, 1, 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Chaource_%28fromage%29_01.jpg/800px-Chaource_%28fromage%29_01.jpg', 76.17),
@@ -193,6 +202,29 @@ INSERT INTO `role` (`id`, `nom`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `token`
+--
+
+CREATE TABLE `token` (
+  `id` varchar(128) CHARACTER SET utf8mb4 NOT NULL,
+  `user` int(11) NOT NULL,
+  `validAfter` datetime NOT NULL,
+  `validBefore` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Déchargement des données de la table `token`
+--
+
+INSERT INTO `token` (`id`, `user`, `validAfter`, `validBefore`) VALUES
+('<example>', 1, '2020-05-05 00:25:26', '2020-05-04 00:15:26'),
+('<example>', 1, '2020-05-04 22:49:41', '2020-05-03 22:39:41'),
+('<example>', 1, '2020-05-05 00:21:29', '2020-05-04 00:11:29'),
+('<example>', 1, '2020-05-04 18:59:41', '2020-05-03 18:49:41');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `type`
 --
 
@@ -236,10 +268,12 @@ CREATE TABLE `utilisateur` (
 --
 
 INSERT INTO `utilisateur` (`id`, `nom`, `role`, `mdp`, `cb`, `moisExpi`, `anneeExpi`, `cryptogramme`) VALUES
-(1, 'titos', 1, '$argon2id$v=19$m=65536,t=4,p=1$N00wVmYwWUUzV2lpU3lzWA$GuHv4CE9bWaEfQrNgbsuXD9dbJYJIG/8w5MEHTwaagw', NULL, NULL, NULL, NULL),
-(2, 'trupin', 1, '$argon2id$v=19$m=65536,t=4,p=1$dy42QTZueC5iZno1ck9Bbg$NRBjnV5TVUGWrTPq/Dry7IbbLcZJXBGrOb5SnSevVLw', NULL, NULL, NULL, NULL),
-(3, 'dark_kirito_69', 3, '$argon2id$v=19$m=65536,t=4,p=1$NGhIMnRMZDZrLjF1ZzdDYg$e3cNlr4d14lrTsHk/tIXXySjtxnGyo4nXAvIdq4RP7I', NULL, NULL, NULL, NULL),
-(4, 'lactalis', 2, '$argon2id$v=19$m=65536,t=4,p=1$RVJOckRLWmNUWnBiLnFteQ$B7U7MTpvS3T2JfHPo6tkXr36p+L0HpASNrN5Zn0Ge4E', NULL, NULL, NULL, NULL);
+(1, 'titos', 1, '<example>', NULL, NULL, NULL, NULL),
+(2, 'trupin', 1, '<example>', NULL, NULL, NULL, NULL),
+(3, 'dark_kirito_69', 3, '<example>', NULL, NULL, NULL, NULL),
+(4, 'lactalis', 2, '<example>', NULL, NULL, NULL, NULL),
+(9, 'dark_benjamin', 3, '<example>', NULL, NULL, NULL, NULL),
+(10, 'testeur', 3, '<example>', NULL, NULL, NULL, NULL);
 
 --
 -- Index pour les tables déchargées
@@ -289,6 +323,13 @@ ALTER TABLE `role`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Index pour la table `token`
+--
+ALTER TABLE `token`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user` (`user`);
+
+--
 -- Index pour la table `type`
 --
 ALTER TABLE `type`
@@ -316,19 +357,19 @@ ALTER TABLE `avis`
 -- AUTO_INCREMENT pour la table `commande`
 --
 ALTER TABLE `commande`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT pour la table `detailcommande`
 --
 ALTER TABLE `detailcommande`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `fromage`
 --
 ALTER TABLE `fromage`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT pour la table `lait`
@@ -346,13 +387,13 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT pour la table `type`
 --
 ALTER TABLE `type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Contraintes pour les tables déchargées
@@ -384,6 +425,12 @@ ALTER TABLE `detailcommande`
 ALTER TABLE `fromage`
   ADD CONSTRAINT `lait_fromage` FOREIGN KEY (`lait`) REFERENCES `lait` (`id`),
   ADD CONSTRAINT `type_fromage` FOREIGN KEY (`type`) REFERENCES `type` (`id`);
+
+--
+-- Contraintes pour la table `token`
+--
+ALTER TABLE `token`
+  ADD CONSTRAINT `user` FOREIGN KEY (`user`) REFERENCES `utilisateur` (`id`);
 
 --
 -- Contraintes pour la table `utilisateur`
